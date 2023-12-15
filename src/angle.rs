@@ -40,6 +40,9 @@ use num::{BaseFloat, BaseNum};
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Rad<S>(pub S);
 
+#[cfg(feature = "bytemuck")]
+impl_bytemuck_cast!(Rad);
+
 /// An angle, in degrees.
 ///
 /// This type is marked as `#[repr(C)]`.
@@ -47,6 +50,9 @@ pub struct Rad<S>(pub S);
 #[derive(Copy, Clone, PartialEq, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Deg<S>(pub S);
+
+#[cfg(feature = "bytemuck")]
+impl_bytemuck_cast!(Deg);
 
 impl<S> From<Rad<S>> for Deg<S>
 where
