@@ -27,6 +27,7 @@ use structure::*;
 use approx;
 use num::{BaseFloat, BaseNum};
 use vector::{Vector1, Vector2, Vector3, Vector4};
+use crate::vector::impl_vector_egui;
 
 #[cfg(feature = "mint")]
 use mint;
@@ -374,6 +375,14 @@ impl_bytemuck_cast!(Point1);
 impl_bytemuck_cast!(Point2);
 #[cfg(feature = "bytemuck")]
 impl_bytemuck_cast!(Point3);
+
+
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Point1 { x }, 1);
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Point2 { x,y }, 2);
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Point3 { x,y,z }, 3);
 
 impl<S: fmt::Debug> fmt::Debug for Point1<S> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

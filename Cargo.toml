@@ -19,17 +19,20 @@ name = "cgmath"
 [features]
 unstable = []
 swizzle = []
+egui-probe = ["dep:egui-probe"]
 
 [dependencies]
 approx = "0.5"
 mint = { version = "0.5.8", optional = true }
-num-traits = "0.2"
+num-traits = "0.2.19"
 # small_rng used only for benchmarks
-rand = { version = "0.8", features = ["small_rng"], optional = true }
+rand = { version = "0.9", features = ["small_rng"], optional = true }
 serde = { version = "1.0", features = ["serde_derive"], optional = true }
 # works only in rust toolchain up to 1.32, disabled indefinitely
-#simd = { version = "0.2", optional = true }
-bytemuck = { version = "1.0", optional = true }
+simd = { version = "0.2", optional = true }
+bytemuck = { version = "1.22", optional = true }
+egui-probe = { version = "0.8", optional = true }
+
 
 [dev-dependencies]
 serde_json = "1.0"

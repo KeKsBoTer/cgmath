@@ -43,6 +43,29 @@ pub struct Rad<S>(pub S);
 #[cfg(feature = "bytemuck")]
 impl_bytemuck_cast!(Rad);
 
+#[cfg(feature = "egui-probe")]
+impl<S:egui_probe::EguiProbe+egui_probe::egui::emath::Numeric> egui_probe::EguiProbe for Rad<S> {
+    fn probe(&mut self, ui: &mut egui_probe::egui::Ui, _style: &egui_probe::Style) -> egui_probe::egui::Response {
+        use std::f64::consts::TAU;
+        
+        let mut taus = self.0.to_f64() / TAU;
+        let mut response = ui.add(egui_probe::egui::DragValue::new(&mut taus).speed(0.01).suffix("τ"));
+
+        if ui.style().explanation_tooltips {
+            response =
+                response.on_hover_text("1τ = one turn, 0.5τ = half a turn, etc. 0.25τ = 90°");
+        }
+
+        // only touch `*radians` if we actually changed the value
+        if taus != self.0.to_f64() / TAU {
+            self.0 = S::from_f64(taus * TAU);
+            response.mark_changed();
+        }
+
+        response
+    }
+}
+
 /// An angle, in degrees.
 ///
 /// This type is marked as `#[repr(C)]`.
@@ -53,6 +76,22 @@ pub struct Deg<S>(pub S);
 
 #[cfg(feature = "bytemuck")]
 impl_bytemuck_cast!(Deg);
+
+#[cfg(feature = "egui-probe")]
+impl<S: egui_probe::egui::emath::Numeric> egui_probe::EguiProbe for Deg<S> {
+    fn probe(&mut self, ui: &mut egui_probe::egui::Ui, _style: &egui_probe::Style) -> egui_probe::egui::Response {
+        let mut degrees = self.0.to_f64().to_degrees();
+        let mut response = ui.add(egui_probe::egui::DragValue::new(&mut degrees).speed(1.0).suffix("°"));
+
+        // only touch `*radians` if we actually changed the degree value
+        if degrees != self.0.to_f64().to_degrees() {
+            self.0 = S::from_f64(degrees.to_radians());
+            response.mark_changed();
+        }
+
+        response
+    }
+}
 
 impl<S> From<Rad<S>> for Deg<S>
 where

@@ -692,6 +692,29 @@ impl<S: Clone> mint::IntoMint for Quaternion<S> {
 #[cfg(feature = "bytemuck")]
 impl_bytemuck_cast!(Quaternion);
 
+#[cfg(feature = "egui-probe")]
+impl<S:egui_probe::EguiProbe> egui_probe::EguiProbe for Quaternion<S>{
+        fn probe(&mut self, ui: &mut egui_probe::egui::Ui, _style: &egui_probe::Style) -> egui_probe::egui::Response {
+            ui.weak("Quaternion")
+        }
+
+        fn iterate_inner(
+            &mut self,
+            ui: &mut egui_probe::egui::Ui,
+            f: &mut dyn FnMut(&str, &mut egui_probe::egui::Ui, &mut dyn egui_probe::EguiProbe),
+        ) {
+            f("s", ui, &mut self.s);
+            f("v", ui, &mut self.v);
+        }
+}
+#[cfg(feature = "egui-probe")]
+// TODO remove this
+impl<S:BaseFloat> Default for Quaternion<S> {
+    fn default() -> Self {
+        Self::one()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use quaternion::*;

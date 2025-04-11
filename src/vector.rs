@@ -615,6 +615,44 @@ impl_mint_conversions!(Vector3 { x, y, z }, Vector3);
 #[cfg(feature = "mint")]
 impl_mint_conversions!(Vector4 { x, y, z, w }, Vector4);
 
+#[macro_export]
+macro_rules! impl_vector_egui {
+    ($VectorN:ident { $($field:ident),+ }, $n:expr) => {
+
+        impl<T:egui_probe::EguiProbe> egui_probe::EguiProbe for $VectorN<T> {
+            fn probe(&mut self, ui: &mut egui_probe::egui::Ui, _style: &egui_probe::Style) -> egui_probe::egui::Response {
+                ui.weak(stringify!($VectorN))
+            }
+
+            fn iterate_inner(
+                &mut self,
+                ui: &mut egui_probe::egui::Ui,
+                f: &mut dyn FnMut(&str, &mut egui_probe::egui::Ui, &mut dyn egui_probe::EguiProbe),
+            ) {
+                $(f(&stringify!($field),ui,&mut self.$field);)+
+            }
+        }
+
+        // TODO remove this
+        impl<T:BaseNum> Default for $VectorN<T> {
+            fn default() -> Self {
+                $VectorN { $($field: T::zero()),+ }
+            }
+        }
+    }
+}
+
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Vector1 { x }, 1);
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Vector2 { x, y }, 2);
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Vector3 { x,y,z }, 3);
+#[cfg(feature = "egui-probe")]
+impl_vector_egui!(Vector4 { x,y,z,w }, 4);
+
+pub(crate) use impl_vector_egui;
+
 #[cfg(test)]
 mod tests {
     mod vector2 {
